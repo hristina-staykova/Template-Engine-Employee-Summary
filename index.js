@@ -1,8 +1,32 @@
 var inquirer = require("inquirer");
-var jest = require("jest");
 var fs = require("fs");
 
-let questions1 = [
+//questions for the Manager, asked first
+let questionsManager = [
+  {
+    type: "input",
+    name: "name",
+    message: "What is your name?"
+  },
+  {
+    type: "input",
+    name: "id",
+    message: "What is your ID?"
+  },
+  {
+    type: "input",
+    name: "email",
+    message: "What is your email?"
+  },
+  {
+    type: "input",
+    name: "officeNo",
+    message: "What is your office number?"
+  }
+];
+
+//questions about the Engineer team member
+let questionEngineer = [
   {
     type: "input",
     name: "name",
@@ -19,30 +43,29 @@ let questions1 = [
     message: "What is the email of the team member?"
   },
   {
-    name: "role",
-    type: "list",
-    message: "What is the role of the team member?",
-    choices: ["Manager", "Engineer", "Intern"]
-  }
-];
-
-let questionManager = [
-  {
-    type: "input",
-    name: "officeNumber",
-    message: "What is the office number of the team member?"
-  }
-];
-
-let questionEngineer = [
-  {
     type: "input",
     name: "github",
     message: "What is the GitHub username of the team member?"
   }
 ];
 
+//questions about the Intern team member
 let questionIntern = [
+  {
+    type: "input",
+    name: "name",
+    message: "What is the name of the team member?"
+  },
+  {
+    type: "input",
+    name: "id",
+    message: "What is the ID of the team member?"
+  },
+  {
+    type: "input",
+    name: "email",
+    message: "What is the email of the team member?"
+  },
   {
     type: "input",
     name: "school",
@@ -50,6 +73,7 @@ let questionIntern = [
   }
 ];
 
+//do we want another entry?
 let flag = [
   {
     type: "confirm",
@@ -58,32 +82,43 @@ let flag = [
   }
 ];
 
-let manager;
-let intern;
-let engineer;
-let addNewTeamMember = false;
+//which set of questions to be displayed depending on the answer/role here
+let role = [
+  {
+    name: "role",
+    type: "list",
+    message: "What is the role of the team member that you would like to add?",
+    choices: ["Engineer", "Intern"]
+  }
+];
 
+//to save the answers for the team members
+let manager = [];
+let intern = [];
+let engineer = [];
+
+//main function
 async function questions() {
-  const answers = await inquirer.prompt(questions1);
-  if (answers.role === "Manager") {
-    manager = await inquirer.prompt(questionManager);
-  }
+  const answersManager = await inquirer.prompt(questionsManager);
+  manager.push(answersManager);
 
-  if (answers.role === "Engineer") {
-    engineer = await inquirer.prompt(questionEngineer);
+  //we keep asking for a new member entry until "No"
+  while (true) {
+    const addNewTeamMember = await inquirer.prompt(flag);
+    if (addNewTeamMember.flag === false) {
+      break;
+    } else {
+      let newTeamMember = await inquirer.prompt(role);
+      if (newTeamMember.role === "Engineer") {
+        answersEngineer = await inquirer.prompt(questionEngineer);
+        engineer.push(answersEngineer);
+      } else if (newTeamMember.role === "Intern") {
+        answersIntern = await inquirer.prompt(questionIntern);
+        intern.push(answersIntern);
+      }
+    }
   }
-
-  if (answers.role === "Intern") {
-    intern = await inquirer.prompt(questionIntern);
-  }
-  newTeamMember();
+  console.log(manager, engineer, intern);
 }
 
-async function newTeamMember() {
-  const newEntry = await inquirer.prompt(flag);
-  if (newEntry.flag === true) {
-    questions();
-  }
-}
-
-newTeamMember();
+questions();
