@@ -97,35 +97,17 @@ let managers = [];
 let interns = [];
 let engineers = [];
 
-//main function
-async function questions() {
-  const answersManager = await inquirer.prompt(questionsManager);
-  managers.push(answersManager);
-
-  //we keep asking for a new member entry until "No"
-  let addNewTeamMember;
-  while (true) {
-    addNewTeamMember = await inquirer.prompt(flag);
-    if (addNewTeamMember.flag === false) {
-      break;
-    } else {
-      let newTeamMember = await inquirer.prompt(role);
-      if (newTeamMember.role === "Engineer") {
-        answersEngineer = await inquirer.prompt(questionEngineer);
-        engineers.push(answersEngineer);
-      } else if (newTeamMember.role === "Intern") {
-        answersIntern = await inquirer.prompt(questionIntern);
-        interns.push(answersIntern);
-      }
-    }
-  }
-  generateHTML(managers, engineers, interns);
+//save the team information in a new html file
+function saveTeamRoster(staticHTML) {
+  fs.writeFileSync("output/teamroster.html", staticHTML);
 }
 
+//generate the html from the user answers
 function generateHTML(managers, engineers, interns) {
   var managerHTML = "";
   var engineerHTML = "";
   var internHTML = "";
+
   managers.forEach(manager => {
     managerHTML += `<div class="col">
     <div class="card" style="width: 18rem;">
@@ -174,7 +156,7 @@ function generateHTML(managers, engineers, interns) {
   </div>`;
   });
 
-  //read main.html file and replace the placeholders with the information from answers
+  //read main.html template file and replace the placeholders with the information from answers
   fs.readFile("templates/main.html", "utf8", function(err, staticHTML) {
     if (err) {
       throw err;
@@ -192,15 +174,33 @@ function generateHTML(managers, engineers, interns) {
       internHTML
     );
     console.log(staticHTML);
+    saveTeamRoster(staticHTML);
   });
+}
 
-  return staticHTML;
+//main function
+async function questions() {
+  const answersManager = await inquirer.prompt(questionsManager);
+  managers.push(answersManager);
+
+  //we keep asking for a new member entry until "No"
+  let addNewTeamMember;
+  while (true) {
+    addNewTeamMember = await inquirer.prompt(flag);
+    if (addNewTeamMember.flag === false) {
+      break;
+    } else {
+      let newTeamMember = await inquirer.prompt(role);
+      if (newTeamMember.role === "Engineer") {
+        answersEngineer = await inquirer.prompt(questionEngineer);
+        engineers.push(answersEngineer);
+      } else if (newTeamMember.role === "Intern") {
+        answersIntern = await inquirer.prompt(questionIntern);
+        interns.push(answersIntern);
+      }
+    }
+  }
+  generateHTML(managers, engineers, interns);
 }
 
 questions();
-
-//  fs.writeFileSync("output/teamroster.html", staticHTML, "utf8", function(err) {
-//     if (err) {
-//       throw err;
-//     }
-//   };
