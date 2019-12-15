@@ -93,32 +93,114 @@ let role = [
 ];
 
 //to save the answers for the team members
-let manager = [];
-let intern = [];
-let engineer = [];
+let managers = [];
+let interns = [];
+let engineers = [];
 
 //main function
 async function questions() {
   const answersManager = await inquirer.prompt(questionsManager);
-  manager.push(answersManager);
+  managers.push(answersManager);
 
   //we keep asking for a new member entry until "No"
+  let addNewTeamMember;
   while (true) {
-    const addNewTeamMember = await inquirer.prompt(flag);
+    addNewTeamMember = await inquirer.prompt(flag);
     if (addNewTeamMember.flag === false) {
       break;
     } else {
       let newTeamMember = await inquirer.prompt(role);
       if (newTeamMember.role === "Engineer") {
         answersEngineer = await inquirer.prompt(questionEngineer);
-        engineer.push(answersEngineer);
+        engineers.push(answersEngineer);
       } else if (newTeamMember.role === "Intern") {
         answersIntern = await inquirer.prompt(questionIntern);
-        intern.push(answersIntern);
+        interns.push(answersIntern);
       }
     }
   }
-  console.log(manager, engineer, intern);
+  generateHTML(managers, engineers, interns);
+}
+
+function generateHTML(managers, engineers, interns) {
+  var managerHTML = "";
+  var engineerHTML = "";
+  var internHTML = "";
+  managers.forEach(manager => {
+    managerHTML += `<div class="col">
+    <div class="card" style="width: 18rem;">
+            <div class="card-body">
+              <h5 class="card-title" id="managerName">${manager.name}</h5>
+              <h6 class="card-subtitle mb-2 text-muted">Manager</h6>
+            </div>
+            <ul class="list-group list-group-flush">
+                    <li class="list-group-item id">${manager.id}</li>
+                    <li class="list-group-item email">${manager.email}</li>
+                    <li class="list-group-item" id="office">${manager.officeNo}</li>
+            </ul>
+    </div>
+  </div>`;
+  });
+
+  engineers.forEach(engineer => {
+    engineerHTML += `<div class="col">
+    <div class="card" style="width: 18rem;">
+            <div class="card-body">
+              <h5 class="card-title" id="managerName">${engineer.name}</h5>
+              <h6 class="card-subtitle mb-2 text-muted">Manager</h6>
+            </div>
+            <ul class="list-group list-group-flush">
+                    <li class="list-group-item id">${engineer.id}</li>
+                    <li class="list-group-item email">${engineer.email}</li>
+                    <li class="list-group-item" id="office">${engineer.github}</li>
+            </ul>
+    </div>
+  </div>`;
+  });
+
+  interns.forEach(intern => {
+    internHTML += `<div class="col">
+    <div class="card" style="width: 18rem;">
+            <div class="card-body">
+              <h5 class="card-title" id="managerName">${intern.name}</h5>
+              <h6 class="card-subtitle mb-2 text-muted">Manager</h6>
+            </div>
+            <ul class="list-group list-group-flush">
+                    <li class="list-group-item id">${intern.id}</li>
+                    <li class="list-group-item email">${intern.email}</li>
+                    <li class="list-group-item" id="office">${intern.school}</li>
+            </ul>
+    </div>
+  </div>`;
+  });
+
+  //read main.html file and replace the placeholders with the information from answers
+  fs.readFile("templates/main.html", "utf8", function(err, staticHTML) {
+    if (err) {
+      throw err;
+    }
+    staticHTML = staticHTML.replace(
+      "###___MANAGERS_PLACEHOLDER___###",
+      managerHTML
+    );
+    staticHTML = staticHTML.replace(
+      "###___ENGINEERS_PLACEHOLDER___###",
+      engineerHTML
+    );
+    staticHTML = staticHTML.replace(
+      "###___INTERNS_PLACEHOLDER___###",
+      internHTML
+    );
+    console.log(staticHTML);
+  });
+
+  return staticHTML;
 }
 
 questions();
+
+//  fs.writeFileSync("output/teamroster.html", staticHTML, "utf8", function(err) {
+//     if (err) {
+//       throw err;
+//     }
+//   };
