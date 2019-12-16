@@ -109,48 +109,57 @@ function generateHTML(managers, engineers, interns) {
   var internHTML = "";
 
   managers.forEach(manager => {
-    managerHTML += `<div class="col">
+    managerHTML += `<div class="col-4 pb-4">
     <div class="card" style="width: 18rem;">
             <div class="card-body">
               <h5 class="card-title" id="managerName">${manager.name}</h5>
               <h6 class="card-subtitle mb-2 text-muted">Manager</h6>
             </div>
             <ul class="list-group list-group-flush">
-                    <li class="list-group-item id">${manager.id}</li>
-                    <li class="list-group-item email">${manager.email}</li>
-                    <li class="list-group-item" id="office">${manager.officeNo}</li>
+                    <li class="list-group-item id"><i class="fas fa-id-card-alt"></i>
+                    ${manager.id}</li>
+                    <li class="list-group-item email"><i class="fas fa-at"></i>
+                    ${manager.email}</li>
+                    <li class="list-group-item" id="office"><i class="fas fa-building"></i>
+                    ${manager.officeNo}</li>
             </ul>
     </div>
   </div>`;
   });
 
   engineers.forEach(engineer => {
-    engineerHTML += `<div class="col">
+    engineerHTML += `<div class="col-4 pb-4">
     <div class="card" style="width: 18rem;">
             <div class="card-body">
-              <h5 class="card-title" id="managerName">${engineer.name}</h5>
-              <h6 class="card-subtitle mb-2 text-muted">Manager</h6>
+              <h5 class="card-title" id="engineerName">${engineer.name}</h5>
+              <h6 class="card-subtitle mb-2 text-muted">Engineer</h6>
             </div>
             <ul class="list-group list-group-flush">
-                    <li class="list-group-item id">${engineer.id}</li>
-                    <li class="list-group-item email">${engineer.email}</li>
-                    <li class="list-group-item" id="office">${engineer.github}</li>
+                    <li class="list-group-item id"><i class="fas fa-id-card-alt"></i>
+                    ${engineer.id}</li>
+                    <li class="list-group-item email"><i class="fas fa-at"></i>
+                     ${engineer.email}</li>
+                    <li class="list-group-item" id="github"><i class="fab fa-github"></i>
+                    ${engineer.github}</li>
             </ul>
     </div>
   </div>`;
   });
 
   interns.forEach(intern => {
-    internHTML += `<div class="col">
+    internHTML += `<div class="col-4 pb-4">
     <div class="card" style="width: 18rem;">
             <div class="card-body">
-              <h5 class="card-title" id="managerName">${intern.name}</h5>
-              <h6 class="card-subtitle mb-2 text-muted">Manager</h6>
+              <h5 class="card-title" id="internName">${intern.name}</h5>
+              <h6 class="card-subtitle mb-2 text-muted">Intern</h6>
             </div>
             <ul class="list-group list-group-flush">
-                    <li class="list-group-item id">${intern.id}</li>
-                    <li class="list-group-item email">${intern.email}</li>
-                    <li class="list-group-item" id="office">${intern.school}</li>
+                    <li class="list-group-item id"><i class="fas fa-id-card-alt"></i>
+                    ${intern.id}</li>
+                    <li class="list-group-item email"><i class="fas fa-at"></i>
+                    ${intern.email}</li>
+                    <li class="list-group-item" id="school"><i class="fas fa-graduation-cap"></i>
+                    School: ${intern.school}</li>
             </ul>
     </div>
   </div>`;
@@ -173,7 +182,6 @@ function generateHTML(managers, engineers, interns) {
       "###___INTERNS_PLACEHOLDER___###",
       internHTML
     );
-    console.log(staticHTML);
     saveTeamRoster(staticHTML);
   });
 }
@@ -185,10 +193,11 @@ async function questions() {
 
   //we keep asking for a new member entry until "No"
   let addNewTeamMember;
-  while (true) {
+  let checkFlag = true;
+  while (checkFlag) {
     addNewTeamMember = await inquirer.prompt(flag);
-    if (addNewTeamMember.flag === false) {
-      break;
+    if (!addNewTeamMember.flag) {
+      checkFlag = false;
     } else {
       let newTeamMember = await inquirer.prompt(role);
       if (newTeamMember.role === "Engineer") {
