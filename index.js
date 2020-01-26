@@ -159,7 +159,7 @@ function generateHTML(managers, engineers, interns) {
                     <li class="list-group-item email"><i class="fas fa-at"></i>
                     ${intern.email}</li>
                     <li class="list-group-item" id="school"><i class="fas fa-graduation-cap"></i>
-                    School: ${intern.school}</li>
+                    ${intern.school}</li>
             </ul>
     </div>
   </div>`;
@@ -183,6 +183,7 @@ function generateHTML(managers, engineers, interns) {
       internHTML
     );
     saveTeamRoster(staticHTML);
+    console.log("Your html template is saved in the `output` folder");
   });
 }
 
@@ -193,11 +194,10 @@ async function questions() {
 
   //we keep asking for a new member entry until "No"
   let addNewTeamMember;
-  let checkFlag = true;
-  while (checkFlag) {
+  while (true) {
     addNewTeamMember = await inquirer.prompt(flag);
     if (!addNewTeamMember.flag) {
-      checkFlag = false;
+      break;
     } else {
       let newTeamMember = await inquirer.prompt(role);
       if (newTeamMember.role === "Engineer") {
@@ -213,3 +213,4 @@ async function questions() {
 }
 
 questions();
+``;
